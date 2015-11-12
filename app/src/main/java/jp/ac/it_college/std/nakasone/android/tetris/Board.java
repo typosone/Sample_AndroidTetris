@@ -21,7 +21,7 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder holder;
     private DrawThread thread;
     private Bitmap blocks;
-    private Rect[] blockRectArray = new Rect[7];
+    private Rect[] blockRectArray = new Rect[8];
 
     public Board(Context context) {
         super(context);
@@ -40,10 +40,11 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
 
     private void initialize(Context context) {
         getHolder().addCallback(this);
-        blocks = BitmapFactory.decodeResource(context.getResources(), R.drawable.block);
-        int side = blocks.getHeight(); // or getWidth()
+        blocks = BitmapFactory.decodeResource(context.getResources(), R.raw.block);
+        int side = blocks.getWidth(); // or getWidth()
+        Log.i("block.png", "width: " + blocks.getWidth() + "  height: " + blocks.getHeight());
         for (int i = 0; i < blockRectArray.length; i++) {
-            blockRectArray[i] = new Rect(i * side, 0, (i + 1) * side, side);
+            blockRectArray[i] = new Rect(0, i * side, side, (i + 1) * side);
         }
     }
 
@@ -76,25 +77,12 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         RectF destRect = new RectF(0, 0, side, side);
         Paint paint = new Paint();
 
-        canvas.drawBitmap(blocks, blockRectArray[0], destRect, paint);
-
-        destRect.offset(side, side);
-        canvas.drawBitmap(blocks, blockRectArray[1], destRect, paint);
-
-        destRect.offset(side, side);
-        canvas.drawBitmap(blocks, blockRectArray[2], destRect, paint);
-
-        destRect.offset(side, side);
-        canvas.drawBitmap(blocks, blockRectArray[3], destRect, paint);
-
-        destRect.offset(side, side);
-        canvas.drawBitmap(blocks, blockRectArray[4], destRect, paint);
-
-        destRect.offset(side, side);
-        canvas.drawBitmap(blocks, blockRectArray[5], destRect, paint);
-
-        destRect.offset(side, side);
-        canvas.drawBitmap(blocks, blockRectArray[6], destRect, paint);
+        for (Rect src : blockRectArray) {
+            Log.i("rect draw", "" + src);
+            Log.i("rect draw", "" + destRect);
+            canvas.drawBitmap(blocks, src, destRect, paint);
+            destRect.offset(side, side);
+        }
 
     }
 
