@@ -2,6 +2,7 @@
   <dictionary name="tsuyoshi">
     <words>
       <w>tetris</w>
+      <w>tetromino</w>
     </words>
   </dictionary>
 </component>

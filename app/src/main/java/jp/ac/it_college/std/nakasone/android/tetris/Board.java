@@ -5,9 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -18,10 +15,10 @@ import android.view.SurfaceView;
  */
 public class Board extends SurfaceView implements SurfaceHolder.Callback {
     public static final int FPS = 30;
+    Tetromino test = new Tetromino();
     private SurfaceHolder holder;
     private DrawThread thread;
     private Bitmap blocks;
-    private Rect[] blockRectArray = new Rect[8];
 
     public Board(Context context) {
         super(context);
@@ -41,11 +38,6 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     private void initialize(Context context) {
         getHolder().addCallback(this);
         blocks = BitmapFactory.decodeResource(context.getResources(), R.raw.block);
-        int side = blocks.getWidth(); // or getWidth()
-        Log.i("block.png", "width: " + blocks.getWidth() + "  height: " + blocks.getHeight());
-        for (int i = 0; i < blockRectArray.length; i++) {
-            blockRectArray[i] = new Rect(0, i * side, side, (i + 1) * side);
-        }
     }
 
     @Override
@@ -69,21 +61,14 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         if (canvas == null) {
             return;
         }
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-
-        canvas.drawColor(Color.LTGRAY); // 画面クリア(単色塗りつぶし)
-        float side = width / 10.0f;
-        RectF destRect = new RectF(0, 0, side, side);
-        Paint paint = new Paint();
-
-        for (Rect src : blockRectArray) {
-            Log.i("rect draw", "" + src);
-            Log.i("rect draw", "" + destRect);
-            canvas.drawBitmap(blocks, src, destRect, paint);
-            destRect.offset(side, side);
+        if (!Tetromino.Type.isBitmapInitialized()) {
+            Tetromino.Type.setBlockBitmap(blocks);
         }
 
+        canvas.drawColor(Color.LTGRAY); // 画面クリア(単色塗りつぶし)
+
+        test.setPosition(5, 2);
+        test.draw(canvas);
     }
 
     private void startThread() {
