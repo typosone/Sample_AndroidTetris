@@ -113,6 +113,10 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         fallingTetromino.draw(canvas);
     }
 
+    public void send(Tetromino.Orientation orientation) {
+        fallingTetromino.move(orientation);
+    }
+
     private void updateGame() {
         if (count++ % (FPS / 2) != 0) {
             return;

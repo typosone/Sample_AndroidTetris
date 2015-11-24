@@ -18,6 +18,7 @@
         android:background="#ccc">
 
         <jp.ac.it_college.std.nakasone.android.tetris.Board
+            android:id="@+id/board"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>
@@ -42,5 +43,49 @@
         android:text="0"
         android:textColor="#000"
         android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/board_area"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <ImageButton
+            android:id="@+id/left"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:onClick="gameButtonClick"
+            android:scaleType="fitCenter" />
+
+        <ImageButton
+            android:id="@+id/right"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:onClick="gameButtonClick"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_media_play" />
+
+        <ImageButton
+            android:id="@+id/fall"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:onClick="gameButtonClick"
+            android:scaleType="fitCenter" />
+
+        <ImageButton
+            android:id="@+id/rotate"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:onClick="gameButtonClick"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_rotate" />
+    </LinearLayout>
 
 </RelativeLayout>
