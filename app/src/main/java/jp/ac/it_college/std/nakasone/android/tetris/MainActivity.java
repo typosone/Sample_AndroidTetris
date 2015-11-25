@@ -4,16 +4,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Board.Callback {
     private Board board;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new Handler();
         setContentView(R.layout.activity_main);
 
         Bitmap srcImage = BitmapFactory.decodeResource(getResources(),
@@ -29,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
                 srcImage.getWidth(), srcImage.getHeight(), matrix, true);
         ((ImageButton) findViewById(R.id.left)).setImageBitmap(leftImage);
 
-        board = (Board)findViewById(R.id.board);
+        board = (Board) findViewById(R.id.board);
+        board.setCallback(this);
     }
 
     public void gameButtonClick(View v) {
@@ -47,5 +52,18 @@ public class MainActivity extends AppCompatActivity {
                 board.send(Input.Rotate);
                 break;
         }
+    }
+
+    @Override
+    public void scoreAdd(final int score) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                TextView scoreView = (TextView) findViewById(R.id.score);
+                int current = Integer.parseInt(scoreView.getText().toString());
+                current += score;
+                scoreView.setText(String.valueOf(current));
+            }
+        });
     }
 }

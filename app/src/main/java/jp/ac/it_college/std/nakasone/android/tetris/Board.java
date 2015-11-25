@@ -22,6 +22,7 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     public static final int FPS = 30;
     private SurfaceHolder holder;
     private DrawThread thread;
+    private Callback callback;
     private Bitmap blocks;
     private Tetromino fallingTetromino;
     private ArrayList<Tetromino> tetrominoList = new ArrayList<>();
@@ -92,6 +93,7 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     private void clearRows(List<Integer> list) {
+        callback.scoreAdd(list.size());
         Collections.reverse(list);
         for (int row : list) {
             clearRow(row);
@@ -157,6 +159,10 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    public void setCallback(Callback callback) {
+        this.callback = callback;
+    }
+
     private void updateGame() {
         if (count++ / (FPS / 2) == 0) {
             return;
@@ -181,6 +187,10 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
             thread.isFinished = true;
             thread = null;
         }
+    }
+
+    public interface Callback {
+        void scoreAdd(int score);
     }
 
     private class DrawThread extends Thread {
