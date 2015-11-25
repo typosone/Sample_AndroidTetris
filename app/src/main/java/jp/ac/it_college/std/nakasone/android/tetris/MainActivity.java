@@ -35,15 +35,16 @@ public class MainActivity extends AppCompatActivity {
     public void gameButtonClick(View v) {
         switch (v.getId()) {
             case R.id.left:
-                board.send(Tetromino.Orientation.Left);
+                board.send(Input.Left);
                 break;
             case R.id.right:
-                board.send(Tetromino.Orientation.Right);
+                board.send(Input.Right);
                 break;
             case R.id.fall:
-                board.send(Tetromino.Orientation.Down);
+                board.send(Input.Down);
                 break;
             case R.id.rotate:
+                board.send(Input.Rotate);
                 break;
         }
     }
