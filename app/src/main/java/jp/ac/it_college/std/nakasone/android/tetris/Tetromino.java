@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -15,14 +16,8 @@ import java.util.Random;
 /**
  */
 public class Tetromino {
-    private static Paint paint = new Paint();
     private static final HashMap<Orientation, Orientation> CLOCKWISE_ROTATIONS;
-    private Board board;
-    private Coordinate base;
-    private Type type;
-    private Orientation orientation;
-    private Coordinate[] blockBoardCoordinates = Coordinate.asArray(0, 0, 0, 0, 0, 0, 0, 0);
-    private RectF dst = new RectF();
+    private static Paint paint = new Paint();
 
     static {
         CLOCKWISE_ROTATIONS = new HashMap<>();
@@ -31,6 +26,13 @@ public class Tetromino {
         CLOCKWISE_ROTATIONS.put(Orientation.Left, Orientation.Up);
         CLOCKWISE_ROTATIONS.put(Orientation.Up, Orientation.Right);
     }
+
+    private Board board;
+    private Coordinate base;
+    private Type type;
+    private Orientation orientation;
+    private Coordinate[] blockBoardCoordinates = Coordinate.asArray(0, 0, 0, 0, 0, 0, 0, 0);
+    private RectF dst = new RectF();
 
     public Tetromino(Board board) {
         this.board = board;
@@ -118,8 +120,8 @@ public class Tetromino {
     }
 
     public boolean intersect(Tetromino target) {
-        for (Coordinate blockCoordinate: blockBoardCoordinates) {
-            for (Coordinate targetBlockCoordinate: target.blockBoardCoordinates) {
+        for (Coordinate blockCoordinate : blockBoardCoordinates) {
+            for (Coordinate targetBlockCoordinate : target.blockBoardCoordinates) {
                 if (blockCoordinate.x == targetBlockCoordinate.x
                         && blockCoordinate.y == targetBlockCoordinate.y) {
                     return true;
@@ -130,13 +132,31 @@ public class Tetromino {
     }
 
     public boolean isOutOfBounds() {
-        for (Coordinate blockCoordinate: blockBoardCoordinates) {
+        for (Coordinate blockCoordinate : blockBoardCoordinates) {
             if (blockCoordinate.x < 0 || blockCoordinate.x >= 10
                     || blockCoordinate.y <= 0) {
                 return true;
             }
         }
         return false;
+    }
+
+    public Coordinate[] getCoordinates() {
+        return blockBoardCoordinates;
+    }
+
+    public int clearRowAndAdjustDown(int row) {
+        ArrayList<Coordinate> newCoordinates = new ArrayList<>();
+        for (Coordinate coordinate : blockBoardCoordinates) {
+            if (coordinate.y > row) {
+                newCoordinates.add(new Coordinate(coordinate.x, coordinate.y - 1));
+            }
+            if (coordinate.y < row) {
+                newCoordinates.add(coordinate);
+            }
+        }
+        blockBoardCoordinates = newCoordinates.toArray(new Coordinate[newCoordinates.size()]);
+        return blockBoardCoordinates.length;
     }
 
     public enum Orientation {

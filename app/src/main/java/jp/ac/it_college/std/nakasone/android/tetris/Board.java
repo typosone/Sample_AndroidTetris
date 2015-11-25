@@ -12,7 +12,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -55,7 +56,7 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
     public boolean fallTetromino() {
         fallingTetromino.move(Input.Down);
         if (!isValidPosition()) {
-            fallingTetromino.move(Input.Up);
+            fallingTetromino.undo(Input.Down);
             return false;
         }
         return true;
@@ -63,7 +64,7 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
 
     public boolean isValidPosition() {
         boolean overlapping = false;
-        for (Tetromino fixedTetromino: tetrominoList) {
+        for (Tetromino fixedTetromino : tetrominoList) {
             if (fallingTetromino.intersect(fixedTetromino)) {
                 overlapping = true;
                 break;
@@ -71,6 +72,40 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         return !(overlapping || fallingTetromino.isOutOfBounds());
+    }
+
+    private List<Integer> findFullRows() {
+        int[] rowCounts = new int[22];
+        for (Tetromino fixedTetromino : tetrominoList) {
+            for (Coordinate coordinate : fixedTetromino.getCoordinates()) {
+                rowCounts[coordinate.y]++;
+            }
+        }
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int cy = 0; cy < rowCounts.length; cy++) {
+            if (rowCounts[cy] == 10) {
+                list.add(cy);
+            }
+        }
+
+        return list;
+    }
+
+    private void clearRows(List<Integer> list) {
+        Collections.reverse(list);
+        for (int row : list) {
+            clearRow(row);
+        }
+    }
+
+    private void clearRow(int row) {
+        ArrayList<Tetromino> deleteTetromino = new ArrayList<>();
+        for (Tetromino tetromino : tetrominoList) {
+            if (tetromino.clearRowAndAdjustDown(row) == 0) {
+                deleteTetromino.add(tetromino);
+            }
+        }
+        tetrominoList.removeAll(deleteTetromino);
     }
 
     @Override
@@ -117,15 +152,19 @@ public class Board extends SurfaceView implements SurfaceHolder.Callback {
         fallingTetromino.move(input);
         if (!isValidPosition()) {
             fallingTetromino.undo(input);
+        } else if (input == Input.Down) {
+            count = 0;
         }
     }
 
     private void updateGame() {
-        if (count++ % (FPS / 2) != 0) {
+        if (count++ / (FPS / 2) == 0) {
             return;
         }
+        count = 0;
         if (!fallTetromino()) {
             tetrominoList.add(fallingTetromino);
+            clearRows(findFullRows());
             spawnTetromino();
         }
     }
